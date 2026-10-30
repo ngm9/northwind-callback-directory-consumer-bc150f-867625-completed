@@ -30,3 +30,30 @@ func TestEndpointKnownCountry(t *testing.T) {
 		t.Fatalf("expected 200, got %d", rec.Code)
 	}
 }
+func TestEndpointMissingCountry(t *testing.T) {
+	stub := stubClient{payload: client.CountryPayload{Data: []client.CountryRecord{{Name: "Afghanistan", CallingCodes: []string{"93"}}}}}
+	svc := service.NewDirectoryService(stub)
+	h := NewHandler(svc)
+
+	req := httptest.NewRequest(http.MethodGet, "/phone-numbers?phone=656445445", nil)
+	rec := httptest.NewRecorder()
+	h.Routes().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d", rec.Code)
+	}
+}
+
+func TestEndpointMissingPhone(t *testing.T) {
+	stub := stubClient{payload: client.CountryPayload{Data: []client.CountryRecord{{Name: "Afghanistan", CallingCodes: []string{"93"}}}}}
+	svc := service.NewDirectoryService(stub)
+	h := NewHandler(svc)
+
+	req := httptest.NewRequest(http.MethodGet, "/phone-numbers?country=Afghanistan", nil)
+	rec := httptest.NewRecorder()
+	h.Routes().ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected 400, got %d", rec.Code)
+	}
+}

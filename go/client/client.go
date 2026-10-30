@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"net/http"
+	"net/url"
 
 	"northwind/callbackdirectory/config"
 )
@@ -29,8 +30,17 @@ func NewHTTPCountriesClient(cfg config.Config) *HTTPCountriesClient {
 }
 
 func (c *HTTPCountriesClient) FetchCountry(country string) (CountryPayload, error) {
-	url := "https://jsonmock.hackerrank.com/api/countries?name=" + country
-	resp, err := http.Get(url)
+	url, err := url.Parse(c.cfg.UpstreamBaseURL)
+	if err != nil {
+		return CountryPayload{}, err
+	}
+	q := url.Query()
+	q.Add("name", country)
+	url.RawQuery = q.Encode()
+	client := http.Client{
+		Timeout: c.cfg.RequestTimeout,
+	}
+	resp, err := client.Get(url.String())
 	if err != nil {
 		return CountryPayload{}, err
 	}
