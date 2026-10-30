@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+npm-debug.log*
+coverage/
+
+# Go
+/go/bin/
+*.out
+
+# Java
+target/
+*.class
+.mvn/
+
+# Env / logs
+.env
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.DS_Store
